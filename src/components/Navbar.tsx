@@ -49,41 +49,7 @@ export const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="text-gray-500 hover:text-gray-900 transition-colors hidden sm:block">
-              <Search className="h-5 w-5" />
-            </button>
-            
-            {user ? (
-              <div className="flex items-center gap-4">
-                <Link to="/profile" className="text-gray-500 hover:text-gray-900 transition-colors hidden sm:flex items-center gap-1">
-                  <User className="h-5 w-5" />
-                  <span className="text-sm font-medium">{user.first_name || 'Profile'}</span>
-                </Link>
-                <button onClick={logout} className="text-gray-500 hover:text-red-500 transition-colors hidden sm:block" title="Logout">
-                  <LogOut className="h-5 w-5" />
-                </button>
-              </div>
-            ) : (
-              <div className="hidden sm:flex items-center gap-3">
-                <Link to="/auth" state={{ isLogin: true }} className="text-gray-700 hover:text-indigo-600 font-medium text-sm transition-colors">
-                  Log in
-                </Link>
-                <Link to="/auth" state={{ isLogin: false }} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full font-medium text-sm transition-colors">
-                  Sign up
-                </Link>
-              </div>
-            )}
-            <Link to="/cart" className="relative text-gray-900 hover:text-indigo-600 transition-colors">
-              <ShoppingBag className="h-6 w-6" />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-            <button className="text-gray-500 hover:text-gray-900 md:hidden">
-              <Menu className="h-6 w-6" />
-            </button>
+
           </div>
         </div>
       </div>

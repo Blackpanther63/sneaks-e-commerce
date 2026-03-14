@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { products, categories } from '../data/products';
 import { ProductCard } from '../components/ProductCard';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Search } from 'lucide-react';
 
 export const Home = () => {
   const location = useLocation();
@@ -34,6 +34,18 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Mobile Sticky Search Bar */}
+      <div className="sticky top-16 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100 px-4 py-3 md:hidden">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input 
+            type="text" 
+            placeholder="Search sneakers, brands..."
+            className="w-full rounded-full border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          />
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gray-900">
         <div className="absolute inset-0">
@@ -45,31 +57,31 @@ export const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent" />
         </div>
         
-        <div className="relative mx-auto max-w-7xl px-4 py-32 sm:px-6 lg:px-8 lg:py-48">
+        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:py-32 sm:px-6 lg:px-8 lg:py-48 text-center sm:text-left">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-2xl"
+            className="max-w-2xl mx-auto sm:mx-0"
           >
-            <h1 className="font-display text-4xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="font-display text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl leading-none">
               STEP INTO <br />
               <span className="text-indigo-500">THE FUTURE</span>
             </h1>
-            <p className="mt-6 text-xl text-gray-300 max-w-xl">
+            <p className="mt-6 text-lg sm:text-xl text-gray-300 max-w-xl">
               Discover the latest drops, exclusive collaborations, and timeless classics. Elevate your sneaker game with Sneaks.
             </p>
-            <div className="mt-10 flex gap-4">
+            <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <a
                 href="#collection"
-                className="inline-flex items-center rounded-full bg-indigo-600 px-8 py-4 text-base font-bold text-white hover:bg-indigo-500 transition-colors"
+                className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-8 py-4 text-base font-bold text-white hover:bg-indigo-500 transition-colors"
               >
                 Shop Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="inline-flex items-center rounded-full bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur-md hover:bg-white/20 transition-colors"
+                className="inline-flex items-center justify-center rounded-full bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur-md hover:bg-white/20 transition-colors"
               >
                 View Lookbook
               </a>
@@ -80,20 +92,20 @@ export const Home = () => {
 
       {/* Categories & Products */}
       <div id="collection" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mb-10">
+        <div className="mb-10 text-center sm:text-left">
           <h2 className="font-display text-3xl font-black tracking-tight text-gray-900 sm:text-4xl mb-6">
             LATEST DROPS
           </h2>
 
           {/* Product type filters: All | Lifestyle | Sports */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-center sm:justify-start gap-2">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
                 className={`whitespace-nowrap rounded-full px-5 py-1.5 text-sm font-bold shadow-sm border transition-all duration-300 ${
                   activeCategory === category
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-blue-200 shadow-md'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-indigo-100 shadow-md'
                     : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:shadow-md'
                 }`}
               >
@@ -105,7 +117,7 @@ export const Home = () => {
 
         <motion.div 
           layout
-          className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
+          className="grid grid-cols-2 gap-y-8 gap-x-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
         >
           <AnimatePresence mode="popLayout">
             {filteredProducts.map((product) => (

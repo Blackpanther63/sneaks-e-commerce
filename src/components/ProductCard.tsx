@@ -28,7 +28,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <img
           src={product.image}
           alt={product.name}
-          className="h-64 w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+          className="h-40 sm:h-64 w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
         />
         {/* SALE badge */}
         {product.isSale && (
@@ -73,7 +73,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       <div className="mt-4 flex flex-1 flex-col justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-sm sm:text-lg font-semibold text-gray-900 line-clamp-1">
             <Link to={`/product/${product.id}`}>
               <span aria-hidden="true" className="absolute inset-0" />
               {product.name}
@@ -81,8 +81,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </h3>
           <p className="mt-1 text-xs text-gray-400 font-medium uppercase tracking-wide">{product.department}</p>
         </div>
-        <div className="mt-4 flex items-center justify-between">
-          <p className="text-lg font-bold text-gray-900">₹{product.price}</p>
+        <div className="mt-2 sm:mt-4 flex items-center justify-between">
+          <p className="text-base sm:text-lg font-bold text-gray-900">₹{product.price}</p>
           <div className="flex space-x-1">
             {product.colors.slice(0, 3).map((color, idx) => (
               <div

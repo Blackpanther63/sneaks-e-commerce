@@ -18,6 +18,7 @@ import { Auth } from './pages/Auth';
 import { Profile } from './pages/Profile';
 import { OrderHistory } from './pages/OrderHistory';
 import { AIChatWidget } from './components/AIChatWidget';
+import { MobileBottomNav } from './components/MobileBottomNav';
 
 export default function App() {
   return (
@@ -27,7 +28,7 @@ export default function App() {
           <Router>
             <div className="flex min-h-screen flex-col">
               <Navbar />
-              <main className="flex-1">
+              <main className="flex-1 pb-20 md:pb-0">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
@@ -39,6 +40,7 @@ export default function App() {
                 </Routes>
               </main>
               <Footer />
+              <MobileBottomNav />
               <AIChatWidget />
             </div>
           </Router>
