@@ -32,12 +32,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      // Safety timeout — if auth check hangs, unblock the app after 5s
+      const timeout = setTimeout(() => {
+        console.warn('[AUTH] check-auth timed out, proceeding without auth.');
+        setLoading(false);
+      }, 5000);
+
       try {
         const { data } = await api.get('/auth/check-auth');
+        clearTimeout(timeout);
         setUser(data);
       } catch (err) {
-        console.error('Auth verification failed:', err);
-        logout(); // Clear invalid token
+        clearTimeout(timeout);
+        console.error('[AUTH] Auth verification failed:', err);
+        // Clear invalid/expired token
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
       } finally {
         setLoading(false);
       }

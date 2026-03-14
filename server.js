@@ -3,6 +3,8 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import authRoutes from './backend/routes/auth.js';
 import profileRoutes, { changePassword } from './backend/routes/profile.js';
 import { protect } from './backend/middleware/authMiddleware.js';
@@ -11,22 +13,17 @@ import complaintsRoutes from './backend/routes/complaints.js';
 import careRoutes from './backend/routes/care.js';
 import aiRoutes from './backend/routes/ai.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// ... existing routes ...
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
-// The user requested /api/change-password specifically
 app.post('/api/change-password', protect, changePassword);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/complaints', complaintsRoutes);
@@ -40,7 +37,6 @@ app.get('/api/health', (req, res) => {
 // Serve frontend static files
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')));
-
   app.get('*', (req, res) =>
     res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
   );

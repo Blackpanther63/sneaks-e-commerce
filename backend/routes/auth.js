@@ -52,20 +52,22 @@ const setupTransporter = async () => {
       transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.gmail.com',
         port: Number(process.env.SMTP_PORT) || 587,
-        secure: false, // true for 465, false for other ports
+        secure: false,
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
         },
-        // Add timeout to prevent hanging
         connectionTimeout: 10000,
         greetingTimeout: 5000,
         socketTimeout: 15000
       });
-      
-      // Verify connection on startup
-      await transporter.verify();
-      console.log('[AUTH] SMTP connection verified successfully');
+      console.log('[AUTH] SMTP transporter created with real credentials.');
+      // Verify in background — do NOT await (don't block server startup)
+      transporter.verify().then(() => {
+        console.log('[AUTH] SMTP connection verified successfully.');
+      }).catch((err) => {
+        console.error('[AUTH] SMTP verify warning (server still running):', err.message);
+      });
     } else {
       const testAccount = await nodemailer.createTestAccount();
       transporter = nodemailer.createTransport({
@@ -77,7 +79,7 @@ const setupTransporter = async () => {
       console.log('[AUTH] No SMTP config in .env — using Ethereal (dev mode).');
     }
   } catch (err) {
-    console.error('[AUTH] SMTP Transporter Error:', err);
+    console.error('[AUTH] SMTP setup error (non-fatal):', err.message);
   }
 };
 setupTransporter();
