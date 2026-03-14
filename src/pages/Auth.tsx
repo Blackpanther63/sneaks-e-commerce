@@ -524,19 +524,28 @@ export const Auth = () => {
                   </>
                 )}
               </button>
+
+              {/* Secondary button for switching between Login/Signup */}
+              {!isForgotPassword && (
+                <button
+                  type="button"
+                  onClick={() => { 
+                    setIsLogin(!isLogin); 
+                    setStep('form'); 
+                    setError(''); 
+                    setOtpDigits(['','','','','','']);
+                    // Reset scroll to top of card when switching
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-indigo-100 bg-white hover:bg-indigo-50 text-indigo-600 font-bold py-3 text-sm transition-all duration-200"
+                >
+                  {isLogin ? "Create New Account" : "Back to Sign In"}
+                </button>
+              )}
             </form>
 
             {/* Toggle login/signup */}
-            {!isForgotPassword && (
-              <div className="mt-6 text-center">
-                <button
-                  onClick={() => { setIsLogin(!isLogin); setStep('form'); setError(''); setOtpDigits(['','','','','','']); }}
-                  className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
-                >
-                  {isLogin ? "Don't have an account? Sign up →" : 'Already have an account? Sign in →'}
-                </button>
-              </div>
-            )}
+
           </div>
         </div>
       </motion.div>

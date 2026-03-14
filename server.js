@@ -1,6 +1,8 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import authRoutes from './backend/routes/auth.js';
 import profileRoutes, { changePassword } from './backend/routes/profile.js';
 import { protect } from './backend/middleware/authMiddleware.js';
@@ -8,8 +10,6 @@ import ordersRoutes from './backend/routes/orders.js';
 import complaintsRoutes from './backend/routes/complaints.js';
 import careRoutes from './backend/routes/care.js';
 import aiRoutes from './backend/routes/ai.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -47,26 +47,37 @@ const MAX_OTP_ATTEMPTS = 5;
 // ─── Nodemailer Setup ─────────────────────────────────────────────────────────
 let transporter;
 const setupTransporter = async () => {
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-    console.log('[AUTH] Using real SMTP config from .env');
-  } else {
-    const testAccount = await nodemailer.createTestAccount();
-    transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false,
-      auth: { user: testAccount.user, pass: testAccount.pass },
-    });
-    console.log('[AUTH] No SMTP config in .env — using Ethereal (dev mode).');
+  try {
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: Number(process.env.SMTP_PORT) || 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+        // Add timeout to prevent hanging
+        connectionTimeout: 10000,
+        greetingTimeout: 5000,
+        socketTimeout: 15000
+      });
+      
+      // Verify connection on startup
+      await transporter.verify();
+      console.log('[AUTH] SMTP connection verified successfully');
+    } else {
+      const testAccount = await nodemailer.createTestAccount();
+      transporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        secure: false,
+        auth: { user: testAccount.user, pass: testAccount.pass },
+      });
+      console.log('[AUTH] No SMTP config in .env — using Ethereal (dev mode).');
+    }
+  } catch (err) {
+    console.error('[AUTH] SMTP Transporter Error:', err);
   }
 };
 setupTransporter();
@@ -157,6 +168,7 @@ router.post('/send-otp', async (req, res) => {
     });
 
     if (targetMethod === 'email') {
+      console.log(`[AUTH] Attempting to send OTP email to ${email}...`);
       const info = await transporter.sendMail({
         from: `"Sneaks" <${process.env.SMTP_USER}>`,
         to: email,
@@ -165,7 +177,7 @@ router.post('/send-otp', async (req, res) => {
         text: `Your Sneaks verification code is: ${otp}\nThis code will expire in 5 minutes.`,
       });
 
-      console.log(`[AUTH] OTP email sent to ${email}`);
+      console.log(`[AUTH] OTP email sent successfully to ${email}. MessageId: ${info.messageId}`);
 
       if (!process.env.SMTP_USER) {
         const previewUrl = nodemailer.getTestMessageUrl(info);
