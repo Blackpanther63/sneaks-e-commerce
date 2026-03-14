@@ -14,14 +14,17 @@ export const Home = () => {
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
-    if (location.state?.department !== undefined) {
-      setActiveDept(location.state.department || 'All');
-      // Reset category when department changes from navbar
-      setActiveCategory('All');
-      const el = document.getElementById('collection');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (location.state?.department !== undefined || location.state?.scrollTo === 'collection') {
+      if (location.state?.department !== undefined) {
+        setActiveDept(location.state.department || 'All');
+        setActiveCategory('All');
+      }
+      setTimeout(() => {
+        const el = document.getElementById('collection');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
-  }, [location.state?.department]);
+  }, [location.state?.department, location.state?.scrollTo]);
 
   const filteredProducts = products.filter(p => {
     const deptMatch =

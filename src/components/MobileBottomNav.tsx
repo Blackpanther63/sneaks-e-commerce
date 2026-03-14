@@ -17,38 +17,27 @@ export const MobileBottomNav = () => {
     }
   };
 
-  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative flex flex-col items-center gap-1 transition-all duration-300 px-4 py-1.5 rounded-xl ${
-      isActive 
-        ? 'text-indigo-600 bg-indigo-50 shadow-sm' 
+  const navLinkClass = ({ isActive, isAuthActive = false }: { isActive: boolean, isAuthActive?: boolean }) => {
+    const active = isActive || isAuthActive;
+    return `relative flex flex-col items-center gap-1 transition-all duration-300 px-4 py-2 rounded-xl active:scale-95 ${
+      active 
+        ? 'text-indigo-600 bg-gray-100 shadow-md' 
         : 'text-gray-400 hover:text-gray-600'
     }`;
-
-  const scrollToCollection = () => {
-    if (location.pathname !== '/') {
-      navigate('/');
-    }
-    setTimeout(() => {
-      const el = document.getElementById('collection');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-md border-t border-gray-100 px-2 py-2 shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.12)]">
+    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-md border-t border-gray-100 px-2 py-2 shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.15)]">
       <div className="flex items-center justify-around max-w-lg mx-auto">
         <NavLink to="/" end className={navLinkClass}>
           <Home className="h-6 w-6" />
           <span className="text-[10px] font-bold uppercase tracking-tight">Home</span>
         </NavLink>
 
-        <button
-          onClick={scrollToCollection}
-          className={`flex flex-col items-center gap-1 transition-all duration-300 px-4 py-1.5 rounded-xl text-gray-400 hover:text-gray-600 active:scale-95`}
-        >
+        <NavLink to="/category" className={navLinkClass}>
           <Grid className="h-6 w-6" />
           <span className="text-[10px] font-bold uppercase tracking-tight">Category</span>
-        </button>
+        </NavLink>
 
         <NavLink 
           to="/cart" 
@@ -69,7 +58,7 @@ export const MobileBottomNav = () => {
         <NavLink 
           to="/profile" 
           onClick={(e) => handleAuthNav(e, '/profile')}
-          className={navLinkClass}
+          className={(props) => navLinkClass({ ...props, isAuthActive: location.pathname === '/auth' })}
         >
           <User className="h-6 w-6" />
           <span className="text-[10px] font-bold uppercase tracking-tight">

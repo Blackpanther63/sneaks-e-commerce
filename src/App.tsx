@@ -33,6 +33,7 @@ export default function App() {
               <main className="flex-1 pb-20 md:pb-0">
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path="/category" element={<Navigate to="/" state={{ scrollTo: 'collection' }} replace />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />
