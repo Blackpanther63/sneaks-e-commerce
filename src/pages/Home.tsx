@@ -14,7 +14,11 @@ export const Home = () => {
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
-    if (location.state?.department !== undefined || location.state?.scrollTo === 'collection') {
+    // Current location logic
+    const isCategoryPath = location.pathname === '/category';
+    const hasScrollState = location.state?.scrollTo === 'collection';
+    
+    if (location.state?.department !== undefined || isCategoryPath || hasScrollState) {
       if (location.state?.department !== undefined) {
         setActiveDept(location.state.department || 'All');
         setActiveCategory('All');
@@ -24,7 +28,7 @@ export const Home = () => {
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     }
-  }, [location.state?.department, location.state?.scrollTo]);
+  }, [location.state?.department, location.state?.scrollTo, location.pathname]);
 
   const filteredProducts = products.filter(p => {
     const deptMatch =
