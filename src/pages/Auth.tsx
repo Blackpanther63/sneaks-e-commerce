@@ -152,6 +152,13 @@ export const Auth = () => {
       setError('Please enter your phone number for mobile verification.');
       return;
     }
+
+    // For the signup/send-OTP step, delegate fully to sendOtp() which manages its own loading state
+    if (!isLogin && !isForgotPassword && step === 'form') {
+      await sendOtp();
+      return;
+    }
+
     setError('');
     setLoading(true);
     try {
@@ -165,7 +172,6 @@ export const Auth = () => {
         }
       } else if (isLogin) {
         const res = await api.post('/auth/login', { email, password });
-        // Handle new success/message format
         if (res.data.success || (res.data.token && res.data.id)) {
           login(res.data);
           navigate('/');
@@ -173,32 +179,23 @@ export const Auth = () => {
           setError(res.data.message || 'Invalid login response.');
         }
       } else {
-        if (step === 'form') {
-          await sendOtp();
-        } else {
-          // Verify OTP + create account
-          // Backend now retrieves user data from the session/otpStore
-          const res = await api.post('/auth/register', {
-            email,
-            otp,
-          });
-          
-          if (res.data.success) {
-            // Success! The backend returns the user object inside 'user'
-            if (res.data.user) {
-              login(res.data.user);
-            }
-            alert(res.data.message || 'Account created successfully!');
-            navigate('/');
-          } else {
-            setError(res.data.message || 'Registration failed.');
+        // step === 'otp' — verify OTP and create account
+        const res = await api.post('/auth/register', { email, otp });
+        
+        if (res.data.success) {
+          if (res.data.user) {
+            login(res.data.user);
           }
+          alert(res.data.message || 'Account created successfully!');
+          navigate('/');
+        } else {
+          setError(res.data.message || 'Registration failed.');
         }
       }
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Something went wrong. Please try again.';
       setError(msg);
-      console.error("[AUTH] Error:", msg);
+      console.error('[AUTH] Error:', err);
     } finally {
       setLoading(false);
     }
