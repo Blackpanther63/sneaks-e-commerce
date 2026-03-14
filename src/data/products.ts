@@ -1,0 +1,165 @@
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  category: string;
+  department: string;
+  isSale?: boolean;
+  image: string;
+  colors: string[];
+  sizes: number[];
+}
+
+export const products: Product[] = [
+  {
+    id: 'test-1',
+    name: 'Test Product (1 INR)',
+    price: 1,
+    description: 'A test product for testing payment gateways.',
+    category: 'Lifestyle',
+    department: 'Unisex',
+    isSale: true,
+    image: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&q=80&w=800',
+    colors: ['#000000'],
+    sizes: [10],
+  },
+  {
+    id: '1',
+    name: 'Air Max Pulse',
+    price: 150,
+    description: 'The Air Max Pulse pulls inspiration from the London music scene, bringing an underground touch to the iconic Air Max line.',
+    category: 'Lifestyle',
+    department: 'Men',
+    image: 'https://images.unsplash.com/photo-1605348532760-6753d2c43329?auto=format&fit=crop&q=80&w=800',
+    colors: ['#000000', '#ffffff', '#ff0000'],
+    sizes: [7, 8, 9, 10, 11, 12],
+  },
+  {
+    id: '2',
+    name: 'ZoomX Vaporfly',
+    price: 250,
+    description: 'Continue the next evolution of speed with a racing shoe made to help you chase new goals and records.',
+    category: 'Sports',
+    department: 'Women',
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800',
+    colors: ['#ff0000', '#0000ff'],
+    sizes: [8, 8.5, 9, 9.5, 10, 10.5, 11],
+  },
+  {
+    id: '3',
+    name: 'Dunk Low Retro',
+    price: 110,
+    description: 'Created for the hardwood but taken to the streets, the 80s b-ball icon returns with perfectly shined overlays.',
+    category: 'Lifestyle',
+    department: 'Men',
+    image: 'https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?auto=format&fit=crop&q=80&w=800',
+    colors: ['#000000', '#ffffff', '#00ff00'],
+    sizes: [6, 7, 8, 9, 10, 11],
+  },
+  {
+    id: '4',
+    name: 'Air Force 1 \'07',
+    price: 115,
+    description: 'The radiance lives on in the Air Force 1 \'07, the b-ball icon that puts a fresh spin on what you know best.',
+    category: 'Lifestyle',
+    department: 'Women',
+    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&q=80&w=800',
+    colors: ['#ffffff', '#000000'],
+    sizes: [7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12],
+  },
+  {
+    id: '5',
+    name: 'Pegasus 40',
+    price: 130,
+    description: 'A springy ride for every run, the Peg\'s familiar, just-for-you feel returns to help you accomplish your goals.',
+    category: 'Sports',
+    department: 'Men',
+    isSale: true,
+    image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&q=80&w=800',
+    colors: ['#000000', '#808080', '#0000ff'],
+    sizes: [8, 9, 10, 11, 12],
+  },
+  {
+    id: '6',
+    name: 'Blazer Mid \'77 Vintage',
+    price: 105,
+    description: 'In the 70s, shoes were simple. In the 80s, they became a staple. In the 90s, they became a classic.',
+    category: 'Lifestyle',
+    department: 'Unisex',
+    image: 'https://images.unsplash.com/photo-1579338559194-a162d19bf842?auto=format&fit=crop&q=80&w=800',
+    colors: ['#ffffff', '#ff0000', '#000000'],
+    sizes: [7, 8, 9, 10, 11],
+  },
+  {
+    id: '7',
+    name: 'Metcon 9',
+    price: 150,
+    description: 'Whatever your "why" is for working out, the Metcon 9 makes it all worth it.',
+    category: 'Sports',
+    department: 'Women',
+    image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&q=80&w=800',
+    colors: ['#000000', '#ff00ff'],
+    sizes: [8, 8.5, 9, 9.5, 10, 10.5, 11, 12],
+  },
+  {
+    id: '8',
+    name: 'Air Jordan 1 Retro High',
+    price: 180,
+    description: 'Familiar but always fresh, the iconic Air Jordan 1 is remastered for today\'s sneakerhead culture.',
+    category: 'Sports',
+    department: 'Men',
+    image: 'https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?auto=format&fit=crop&q=80&w=800',
+    colors: ['#ff0000', '#000000', '#ffffff'],
+    sizes: [7, 8, 9, 10, 11, 12, 13],
+  },
+  {
+    id: '9',
+    name: 'LeBron XXI',
+    price: 200,
+    description: 'The LeBron XXI has a cabling system that works with Zoom Air cushioning and a light, low-to-the-ground design.',
+    category: 'Sports',
+    department: 'Men',
+    isSale: true,
+    image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&q=80&w=800',
+    colors: ['#0000ff', '#ffff00'],
+    sizes: [8, 9, 10, 11, 12, 13, 14],
+  },
+  {
+    id: '10',
+    name: 'Invincible 3',
+    price: 180,
+    description: 'With maximum cushioning to support every mile, the Invincible 3 gives you our highest level of comfort underfoot.',
+    category: 'Sports',
+    department: 'Women',
+    image: 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?auto=format&fit=crop&q=80&w=800',
+    colors: ['#ffffff', '#000000', '#00ff00'],
+    sizes: [7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11],
+  },
+  {
+    id: '11',
+    name: 'Air Max 90',
+    price: 130,
+    description: 'Lace up and feel the legacy. Produced at the intersection of art, music and culture.',
+    category: 'Lifestyle',
+    department: 'Men',
+    image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&q=80&w=800',
+    colors: ['#ffffff', '#ff0000', '#000000'],
+    sizes: [6, 7, 8, 9, 10, 11, 12],
+  },
+  {
+    id: '12',
+    name: 'Free Metcon 5',
+    price: 120,
+    description: 'When your workouts wade into the nitty gritty, the Free Metcon 5 can meet you in the depths.',
+    category: 'Training',
+    department: 'Women',
+    isSale: true,
+    image: 'https://images.unsplash.com/photo-1605408499391-6368c628ef42?auto=format&fit=crop&q=80&w=800',
+    colors: ['#000000', '#ffffff'],
+    sizes: [7, 8, 9, 10, 11, 12],
+  }
+];
+
+export const categories = ['All', 'Lifestyle', 'Sports'];
+export const departments = ['All', 'Men', 'Women', 'Sale'];
