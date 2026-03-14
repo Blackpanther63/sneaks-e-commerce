@@ -19,6 +19,7 @@ import { Profile } from './pages/Profile';
 import { OrderHistory } from './pages/OrderHistory';
 import { AIChatWidget } from './components/AIChatWidget';
 import { MobileBottomNav } from './components/MobileBottomNav';
+import { ScrollManager } from './components/ScrollManager';
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
       <WishlistProvider>
         <CartProvider>
           <Router>
+            <ScrollManager />
             <div className="flex min-h-screen flex-col">
               <Navbar />
               <main className="flex-1 pb-20 md:pb-0">
