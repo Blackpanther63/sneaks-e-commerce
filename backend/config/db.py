@@ -2,19 +2,33 @@ import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
 
-# Environment loaded in app.py
+# Load environment variables
+load_dotenv()
 
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/sneaks")
+# Get MongoDB connection string from environment variable
+MONGO_URI = os.getenv("MONGO_URI")
 
-# Global variables for db client
+# Global database instance
 db = None
 
 def get_db():
     global db
+
     if db is None:
-        client = MongoClient(MONGO_URI)
-        db = client.get_default_database() # Uses db from uri if exists, else defaults
-        # If no default database specified in URI, we default to "sneaks"
-        if db.name == "admin" or db.name == "test":
-             db = client["sneaks"]
+        try:
+            if not MONGO_URI:
+                raise ValueError("MONGO_URI environment variable is not set")
+
+            # Connect to MongoDB Atlas
+            client = MongoClient(MONGO_URI)
+
+            # Select database
+            db = client["sneakers"]
+
+            print("✅ MongoDB Atlas connected successfully")
+
+        except Exception as e:
+            print("❌ MongoDB connection failed:", str(e))
+            raise e
+
     return db
