@@ -1,13 +1,15 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, LogIn } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const Cart = () => {
   const { items, updateQuantity, removeFromCart, totalPrice } = useCart();
   const navigate = useNavigate();
-  const isLoggedIn = !!localStorage.getItem('token');
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
 
   if (items.length === 0) {
     return (

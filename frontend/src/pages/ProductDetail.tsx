@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 import { motion } from 'motion/react';
-import { ArrowLeft, Star, Truck, ShieldCheck, ArrowRight, Zap } from 'lucide-react';
+import { ArrowLeft, Star, Truck, Shield, Ruler, Zap, Loader2, ShieldCheck } from 'lucide-react';
+import api from '../utils/api';
 
 export const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,11 +11,39 @@ export const ProductDetail = () => {
   const { addToCart } = useCart();
   const isLoggedIn = !!localStorage.getItem('token');
   
-  const product = products.find((p) => p.id === id);
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   
-  const [selectedSize, setSelectedSize] = useState<number | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(product?.colors[0] || null);
+  const [selectedSize, setSelectedSize] = useState<number>(0);
+  const [selectedColor, setSelectedColor] = useState<string>('');
   const [isAdded, setIsAdded] = useState(false);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await api.get(`/products/${id}`);
+        setProduct(res.data);
+        if (res.data) {
+          if (res.data.sizes?.length > 0) setSelectedSize(res.data.sizes[0]);
+          if (res.data.colors?.length > 0) setSelectedColor(res.data.colors[0]);
+        }
+      } catch (err) {
+        console.error('Error fetching product:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+      </div>
+    );
+  }
 
   if (!product) {
     return (

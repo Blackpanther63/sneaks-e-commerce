@@ -117,7 +117,7 @@ export const Profile = () => {
     return null;
   }
 
-  const { user, login, logout } = useAuth();
+  const { user, updateUserProfile, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const sectionParam = searchParams.get('section') as Section;
@@ -283,7 +283,7 @@ export const Profile = () => {
       const res = await api.put('/profile', formData);
       if (res.data.success && res.data.user) {
         // Update auth context with new user data
-        login({ ...res.data.user, token: user?.token });
+        updateUserProfile({ ...res.data.user });
       }
       setIsEditing(false);
       alert('Profile updated successfully!');

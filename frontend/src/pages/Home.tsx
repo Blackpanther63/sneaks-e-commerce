@@ -1,20 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { products, categories } from '../data/products';
 import { ProductCard } from '../components/ProductCard';
-import { ArrowRight, Search } from 'lucide-react';
+import { categories, Product } from '../data/products';
+import { ArrowRight, Search, Loader2 } from 'lucide-react';
+import api from '../utils/api';
 
 export const Home = () => {
   const location = useLocation();
 
-  // Department comes from the Navbar (Men / Women / Sale / All)
   const [activeDept, setActiveDept] = useState(location.state?.department || 'All');
-  // Category is the second row on the home page (Lifestyle / Running / etc.)
   const [activeCategory, setActiveCategory] = useState('All');
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Current location logic
+    const fetchProducts = async () => {
+      try {
+        const res = await api.get('/products');
+        setProducts(res.data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
     const isCategoryPath = location.pathname === '/category';
     const hasScrollState = location.state?.scrollTo === 'collection';
     

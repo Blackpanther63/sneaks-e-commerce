@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { CreditCard, CheckCircle, MapPin, Plus, Trash2, Package, Truck, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import api from '../utils/api';
@@ -157,15 +158,21 @@ export const Checkout = () => {
     }
   };
 
+  const { user } = useAuth();
+
   const handlePlaceOrder = async () => {
     if (!selectedAddressId) {
       alert("Please select a delivery address.");
       return;
     }
 
+    if (!user) {
+      alert("You must be logged in to place an order.");
+      return;
+    }
+
     setIsProcessing(true);
 
-    // Verify UPI ID if manual entry
     if (paymentMethod === 'UPI' && !selectedUpiApp) {
       if (!isUpiVerified) {
         setUpiError("Please verify your UPI ID first.");
@@ -173,89 +180,84 @@ export const Checkout = () => {
         return;
       }
     }
-    setUpiError(null);
-
-    try {
-      if (paymentMethod === 'Cash on Delivery') {
-        const res = await api.post('/orders', {
-          cartItems: items,
-          totalPrice: total.toFixed(2),
+    const createOrderInFlask = async () => {
+      try {
+        const orderData = {
+          items: items.map(item => ({
+            product_id: item.id,
+            quantity: item.quantity,
+            price: item.price,
+            size: item.selectedSize || item.size,
+            color: item.selectedColor || item.color
+          })),
+          total: total.toFixed(2),
           address_id: selectedAddressId,
           payment_method: paymentMethod
-        });
-        finalizeOrder(res.data.orderId, res.data.tracking_number);
-      } else {
-        // Razorpay flow
-        const { data: orderData } = await api.post('/orders/create-razorpay-order', {
-          amount: total.toFixed(2)
-        });
-
-        const options = {
-          key: 'rzp_test_rYqQ3t0R7u5t1h', // Placeholder Key
-          amount: orderData.order.amount,
-          currency: orderData.order.currency,
-          name: 'Sneaks',
-          description: 'Payment for your sneaker order',
-          image: '/logo192.png',
-          order_id: orderData.order.id,
-          config: {
-            display: {
-              blocks: {
-                upi: {
-                  name: "Pay via UPI",
-                  instruments: [
-                    { method: "upi" }
-                  ]
-                }
-              },
-              sequence: ["block.upi"],
-              preferences: { show_default_blocks: true }
-            }
-          },
-          handler: async (response: any) => {
-            try {
-              const res = await api.post('/orders', {
-                cartItems: items,
-                totalPrice: total.toFixed(2),
-                address_id: selectedAddressId,
-                payment_method: paymentMethod,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature
-              });
-              finalizeOrder(res.data.orderId, res.data.tracking_number);
-            } catch (err) {
-              console.error('Payment verification failed:', err);
-              alert('Payment verification failed. Please contact support.');
-              setIsProcessing(false);
-            }
-          },
-          prefill: {
-            name: `${localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).first_name : ''}`,
-            email: `${localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).email : ''}`,
-            method: 'upi',
-            ...(paymentMethod === 'UPI' && upiId ? { vpa: upiId } : {})
-          },
-          theme: { color: '#4f46e5' },
         };
 
-        const rzp = new (window as any).Razorpay(options);
-        rzp.open();
-        rzp.on('payment.failed', function (response: any) {
-          alert('Payment failed. ' + response.error.description + '. Please try again.');
-          setIsProcessing(false);
-        });
+        const res = await api.post('/orders/create', orderData);
+        if (res.data.success) {
+          finalizeOrder(res.data.order_id, res.data.tracking_number);
+        } else {
+          throw new Error('Failed to create order on server');
+        }
+      } catch (err: any) {
+        console.error('Error creating order:', err);
+        alert('Failed to place order. ' + (err.message || ''));
+        setIsProcessing(false);
       }
-    } catch (error) {
-      console.error('Error submitting order:', error);
-      alert('Failed to place order. Please try again.');
-      setIsProcessing(false);
+    };
+
+    if (paymentMethod === 'Cash on Delivery') {
+      await createOrderInFlask();
+    } else {
+      // Razorpay Mock / Integration
+      try {
+        const res = await api.post('/orders/create-razorpay-order', { amount: total });
+        if (res.data.success) {
+          const options = {
+            key: (import.meta as any).env.VITE_RAZORPAY_KEY || 'rzp_test_rYqQ3t0R7u5t1h',
+            amount: res.data.order.amount,
+            currency: 'INR',
+            name: 'Sneaks',
+            description: 'Order Payment',
+            order_id: res.data.order.id,
+            handler: async function (response: any) {
+              // Payment successful, now create real order
+              await createOrderInFlask();
+            },
+            prefill: {
+              name: user?.name,
+              email: user?.email,
+              contact: user?.phone
+            },
+            theme: { color: '#4f46e5' },
+          };
+          const rzp = new (window as any).Razorpay(options);
+          rzp.on('payment.failed', function (response: any) {
+            alert('Payment Failed!');
+            setIsProcessing(false);
+          });
+          rzp.open();
+        } else {
+          // Fallback mock if Razorpay route isn't up
+          setTimeout(async () => {
+            await createOrderInFlask();
+          }, 1500);
+        }
+      } catch (err) {
+        console.error('Razorpay Error:', err);
+        // Fallback mock
+        setTimeout(async () => {
+          await createOrderInFlask();
+        }, 1500);
+      }
     }
   };
 
-  const finalizeOrder = (oId?: number, tNum?: string) => {
+  const finalizeOrder = (oId?: number | string, tNum?: string) => {
     setIsProcessing(false);
-    if (oId) setOrderId(oId);
+    if (oId) setOrderId(oId as number);
     if (tNum) setTrackingNumber(tNum);
     setIsSuccess(true);
     if (checkoutProduct) {

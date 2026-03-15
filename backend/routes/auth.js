@@ -205,6 +205,75 @@ router.post('/send-otp', async (req, res) => {
   }
 });
 
+// ─── POST /api/auth/firebase-auth ─────────────────────────────────────────────
+// Handles both login and registration for Firebase users
+router.post('/firebase-auth', async (req, res) => {
+  try {
+    const { firebase_uid, email, phone, first_name, last_name } = req.body;
+
+    if (!firebase_uid) {
+      return res.status(400).json({ success: false, message: 'Firebase UID is required.' });
+    }
+
+    // 1. Check if user already exists by firebase_uid
+    let [users] = await pool.query('SELECT * FROM users WHERE firebase_uid = ?', [firebase_uid]);
+    
+    // 2. If not found by UID, check by email or phone (to link existing accounts)
+    if (users.length === 0) {
+      if (email) {
+        [users] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+      } else if (phone) {
+        [users] = await pool.query('SELECT * FROM users WHERE phone = ?', [phone]);
+      }
+
+      // If found by email/phone but no firebase_uid, link them
+      if (users.length > 0) {
+        await pool.query('UPDATE users SET firebase_uid = ? WHERE id = ?', [firebase_uid, users[0].id]);
+        console.log(`[AUTH] Linked Firebase UID ${firebase_uid} to existing user ${users[0].id}`);
+      }
+    }
+
+    // 3. If still not found, create a new user
+    if (users.length === 0) {
+      console.log(`[AUTH] Creating new user for Firebase UID: ${firebase_uid}`);
+      const [result] = await pool.query(
+        'INSERT INTO users (firebase_uid, first_name, last_name, email, phone, email_verified) VALUES (?, ?, ?, ?, ?, TRUE)',
+        [
+          firebase_uid, 
+          first_name || 'User', 
+          last_name || '', 
+          email || null, 
+          phone || null
+        ]
+      );
+      
+      const newUserId = result.insertId;
+      const [newUser] = await pool.query('SELECT * FROM users WHERE id = ?', [newUserId]);
+      users = newUser;
+    }
+
+    const user = users[0];
+    const token = generateToken(user.id);
+
+    res.json({
+      success: true,
+      message: 'Authentication successful',
+      token,
+      user: {
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone: user.phone,
+        token // Return for legacy frontend support
+      }
+    });
+  } catch (err) {
+    console.error('[AUTH] firebase-auth error:', err);
+    res.status(500).json({ success: false, message: `Server error: ${err.message}` });
+  }
+});
+
 // ─── POST /api/auth/register ──────────────────────────────────────────────────
 router.post('/register', async (req, res) => {
   try {

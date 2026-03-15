@@ -3,7 +3,6 @@ import { Package, Truck, CheckCircle, Home } from 'lucide-react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-
 interface Order {
   id: number;
   product_id: string;
@@ -29,8 +28,10 @@ export const OrderHistory = () => {
 
     const fetchOrders = async () => {
       try {
-        const res = await api.get('/orders');
-        setOrders(res.data);
+        const res = await api.get('/orders/history');
+        if (res.data && res.data.orders) {
+          setOrders(res.data.orders);
+        }
       } catch (error) {
         console.error('Failed to fetch orders:', error);
       } finally {
