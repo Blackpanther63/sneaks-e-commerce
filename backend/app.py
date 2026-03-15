@@ -13,6 +13,9 @@ from routes.order_routes import order_routes_bp
 from routes.profile_routes import profile_routes_bp
 
 app = Flask(__name__)
+@app.route("/")
+def home():
+    return {"status": "Sneaks backend running"}
 # Enable CORS for the frontend origin
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
@@ -23,6 +26,8 @@ app.register_blueprint(cart_routes_bp, url_prefix='/api/cart')
 app.register_blueprint(order_routes_bp, url_prefix='/api/orders')
 app.register_blueprint(profile_routes_bp, url_prefix='/api/profile')
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+import os
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
