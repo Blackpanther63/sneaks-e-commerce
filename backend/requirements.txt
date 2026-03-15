@@ -6,3 +6,4 @@ python-dotenv
 PyJWT
 cryptography
 Werkzeug
+PyMySQL

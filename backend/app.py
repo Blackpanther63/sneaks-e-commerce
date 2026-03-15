@@ -1,5 +1,10 @@
+import os
 from flask import Flask
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from routes.auth_routes import auth_bp
 from routes.product_routes import product_routes_bp
@@ -19,4 +24,5 @@ app.register_blueprint(order_routes_bp, url_prefix='/api/orders')
 app.register_blueprint(profile_routes_bp, url_prefix='/api/profile')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)

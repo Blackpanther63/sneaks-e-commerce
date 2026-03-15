@@ -2,7 +2,7 @@ import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
 
-load_dotenv(os.path.join(os.path.dirname(__file__), '../../.env'))
+# Environment loaded in app.py
 
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/sneaks")
 
